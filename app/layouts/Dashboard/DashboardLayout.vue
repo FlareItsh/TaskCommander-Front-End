@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="bg-background flex h-screen">
+    <div class="bg-background custom-scrollbar flex h-screen">
         <!-- Sidebar & Navbar-->
         <DashboardSidebar />
 

@@ -1,45 +1,67 @@
 <script setup lang="ts">
-    //logics here
-    defineProps({
-        label: {
-            type: String,
-            required: false,
-            default: 'Label here',
-        },
-        placeholder: {
-            type: String,
-            required: false,
-            default: 'Placeholder here',
-        },
-        icon: {
-            type: String,
-            required: false,
-            default: 'lucide:component',
-        },
+    interface Props {
+        modelValue?: string | number
+        label?: string
+        placeholder?: string
+        icon?: string
+        type?: string
+        size?: 'sm' | 'md' | 'lg'
+    }
+
+    const props = withDefaults(defineProps<Props>(), {
+        modelValue: '',
+        placeholder: 'Placeholder here',
+        type: 'text',
+        size: 'md',
     })
+
+    const emit = defineEmits(['update:modelValue'])
+
+    const sizeClasses = {
+        sm: 'py-1.5 px-3 pl-9 text-sm rounded-md',
+        md: 'py-2 px-3 pl-10 text-base rounded-lg',
+        lg: 'py-3 px-4 pl-12 text-lg rounded-xl',
+    }
+
+    const iconSizeClasses = {
+        sm: 'text-lg pl-2.5',
+        md: 'text-xl pl-3',
+        lg: 'text-2xl pl-3.5',
+    }
 </script>
 
 <template>
-    <div class="mb-4">
-        <label class="mb-2 block text-sm font-medium text-gray-700"> {{ label }} </label>
-        <div class="relative">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+    <div class="w-full">
+        <label
+            v-if="label"
+            class="text-muted-foreground mb-2 block text-sm font-medium"
+        >
+            {{ label }}
+        </label>
+        <div class="relative flex items-center">
+            <div
+                v-if="icon"
+                class="pointer-events-none absolute inset-y-0 left-0 flex items-center"
+                :class="iconSizeClasses[size]"
+            >
                 <Icon
                     :name="icon"
-                    class="text-foreground/90 text-xl"
+                    class="text-muted-foreground transition-colors"
                 />
             </div>
             <input
-                type="text"
+                :type="type"
+                :value="modelValue"
+                @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
                 :placeholder="placeholder"
-                class="focus:border-ring focus:ring-ring focus:ring-0.5 w-full rounded-lg border py-2 pr-3 pl-10 focus:outline-none"
+                class="focus:ring-primary/20 bg-background text-foreground w-full border transition-all duration-200 focus:ring-4 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                :class="[sizeClasses[size], icon ? '' : 'pl-3']"
             />
         </div>
     </div>
 </template>
 
 <style scoped>
-    /* Text selection colors using primary color with opacity */
     input::selection {
         background-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
         color: var(--color-accent-foreground);
